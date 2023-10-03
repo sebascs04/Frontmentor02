@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import Unsubmit from './components/Unsubmit';
 import Submit from './components/Submit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const points =[
   {
@@ -37,19 +37,27 @@ const points =[
 export default function App() {
   const[send,setSend]=useState(false)
   const [options,setOptions] = useState(points)
-        
+  const[labelsend,setLabelsend] = useState([])
+  
   function handleClick(index) {
     setOptions(
         options.map((option)=> option.id == index && option.state != true ? {...option, state: true} : {...option, state: false}))
   }
 
+  useEffect(()=>setLabelsend(
+    options.filter((option)=> option.state == true)),[options])
+
   function getlabel() {
-    const labelsend = options.filter((option)=> option.state == true)
-    const {label} = labelsend[0]
-    return label
+    if (labelsend.length!=0) {
+      const {label} = labelsend[0]
+        return label
+    } 
   }
 
   function Selected() {
+    if (labelsend.length==0) {
+      return Alert.alert('Debes escoger una puntuación')
+    } 
         setSend(true)
   }
 
